@@ -5,6 +5,11 @@ export function generateStaticParams() {
   return getAllDateParams();
 }
 
+function formatDate(dateStr: string): string {
+  const [, m, d] = dateStr.split("-");
+  return `${+m}월 ${+d}일`;
+}
+
 export default async function DatePage({ params }: { params: Promise<{ date: string }> }) {
   const { date } = await params;
   const data = loadPlaylist(date);
@@ -14,15 +19,30 @@ export default async function DatePage({ params }: { params: Promise<{ date: str
   }
 
   return (
-    <main className="px-6 py-12 max-w-xl mx-auto">
+    <main className="px-6 py-10 max-w-xl mx-auto">
       {/* 헤더 */}
-      <header className="mb-8">
-        <p className="text-xs tracking-widest uppercase mb-1" style={{ color: "var(--text-muted)" }}>
-          지난 방송
-        </p>
-        <h1 className="text-3xl font-bold tracking-tight">{date}</h1>
-        <p className="mt-1 text-sm" style={{ color: "var(--sunset-gold)" }}>
-          {data.dayOfWeek} · {data.songs.length}곡
+      <header className="mb-10">
+        <div className="flex items-center gap-2 mb-3">
+          {data.seqID && (
+            <span
+              className="text-xs font-semibold px-2 py-0.5 rounded-full"
+              style={{
+                background: "rgba(232,112,74,0.15)",
+                color: "var(--sunset-orange)",
+              }}
+            >
+              제 {data.seqID}회
+            </span>
+          )}
+          <span className="text-xs tracking-widest" style={{ color: "var(--text-muted)" }}>
+            지난 방송
+          </span>
+        </div>
+        <h1 className="text-4xl font-bold tracking-tight leading-none mb-2">
+          {formatDate(date)}
+        </h1>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+          {data.dayOfWeek} · {data.songs.length}곡 선곡 · MBC FM4U
         </p>
       </header>
 
@@ -33,11 +53,8 @@ export default async function DatePage({ params }: { params: Promise<{ date: str
             href={data.youtube.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 text-center py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-80"
-            style={{
-              background: "linear-gradient(135deg, var(--sunset-orange), var(--sunset-gold))",
-              color: "#fff",
-            }}
+            className="flex-1 text-center py-3 rounded-2xl font-semibold text-sm transition-opacity hover:opacity-85"
+            style={{ background: "var(--sunset-orange)", color: "#fff" }}
           >
             YouTube에서 듣기
           </a>
@@ -45,11 +62,11 @@ export default async function DatePage({ params }: { params: Promise<{ date: str
             href={data.youtube.musicUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 text-center py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-80"
+            className="flex-1 text-center py-3 rounded-2xl font-semibold text-sm transition-opacity hover:opacity-80"
             style={{
-              background: "var(--card-bg)",
-              color: "var(--sunset-gold)",
-              border: "1px solid var(--sunset-gold)",
+              background: "rgba(232,112,74,0.08)",
+              color: "var(--sunset-orange)",
+              border: "1px solid rgba(232,112,74,0.25)",
             }}
           >
             YouTube Music
@@ -57,36 +74,38 @@ export default async function DatePage({ params }: { params: Promise<{ date: str
         </div>
       )}
 
-      {/* 선곡 목록 */}
-      <ol className="space-y-3">
+      {/* 선곡 목록 — Apple Music row 스타일 */}
+      <ol>
         {data.songs.map((song) => (
           <li
             key={song.order}
-            className="flex items-start gap-4 p-4 rounded-xl"
-            style={{ background: "var(--card-bg)" }}
+            className="flex items-center gap-4 py-3.5 group"
+            style={{ borderBottom: "1px solid var(--track-border)" }}
           >
             <span
-              className="text-xs font-mono w-5 shrink-0 mt-0.5"
+              className="w-5 text-right text-xs tabular-nums shrink-0"
               style={{ color: "var(--text-muted)" }}
             >
               {song.order}
             </span>
             <div className="flex-1 min-w-0">
-              <p className="font-semibold text-sm leading-snug truncate">{song.title}</p>
+              <p className="font-medium text-sm leading-snug truncate">{song.title}</p>
               <p className="text-xs mt-0.5 truncate" style={{ color: "var(--text-muted)" }}>
                 {song.artist}
               </p>
             </div>
-            {song.videoId && (
+            {song.videoId ? (
               <a
                 href={`https://www.youtube.com/watch?v=${song.videoId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="shrink-0 text-xs px-2 py-1 rounded-md transition-opacity hover:opacity-70"
+                className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs transition-all opacity-30 group-hover:opacity-100"
                 style={{ background: "rgba(232,112,74,0.15)", color: "var(--sunset-orange)" }}
               >
                 ▶
               </a>
+            ) : (
+              <div className="w-7 shrink-0" />
             )}
           </li>
         ))}

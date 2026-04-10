@@ -8,6 +8,11 @@ interface SidebarProps {
   dates: DateEntry[];
 }
 
+function formatSidebarDate(dateStr: string, dayOfWeek: string): string {
+  const [, m, d] = dateStr.split("-");
+  return `${+m}/${+d} ${dayOfWeek.charAt(0)}`;
+}
+
 export default function Sidebar({ dates }: SidebarProps) {
   const pathname = usePathname();
 
@@ -51,24 +56,27 @@ export default function Sidebar({ dates }: SidebarProps) {
                 <div className="flex items-center gap-2 min-w-0">
                   {i === 0 && (
                     <span
-                      className="shrink-0 text-xs px-1.5 py-0.5 rounded font-semibold"
+                      className="shrink-0 font-semibold rounded-full"
                       style={{
                         background: "var(--sunset-orange)",
                         color: "#fff",
-                        fontSize: "10px",
+                        fontSize: "9px",
+                        padding: "1px 6px",
                       }}
                     >
                       NEW
                     </span>
                   )}
-                  <span className="truncate font-medium">{entry.date}</span>
+                  <span className="truncate font-medium tabular-nums">
+                    {formatSidebarDate(entry.date, entry.dayOfWeek)}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2 shrink-0 ml-2">
-                  <span className="text-xs" style={{ color: "var(--text-muted)" }}>
-                    {entry.songCount}곡
+                <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                  <span className="text-xs tabular-nums" style={{ color: "var(--text-muted)" }}>
+                    {entry.songCount}
                   </span>
                   {entry.hasPlaylist && (
-                    <span style={{ color: "var(--sunset-orange)", fontSize: "10px" }}>▶</span>
+                    <span style={{ color: "var(--sunset-orange)", fontSize: "9px" }}>▶</span>
                   )}
                 </div>
               </Link>
