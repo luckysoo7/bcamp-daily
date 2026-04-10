@@ -12,6 +12,23 @@
 
 body {
   background-color: var(--deep-navy);
+  /* Spotify/Apple Music 스타일 — 아트워크 색이 배경으로 번지는 ambient 효과 */
+  background-image:
+    radial-gradient(ellipse 90% 55% at 8% 0%,  rgba(232, 112, 74, 0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 45% at 92% 95%, rgba(245, 166, 35, 0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 35% at 50% 50%, rgba(232, 112, 74, 0.03) 0%, transparent 70%);
   color: var(--text-primary);
   font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+/* 아날로그 라디오 grain 텍스처 — 배경에 깊이 추가 */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 250px 250px;
 }

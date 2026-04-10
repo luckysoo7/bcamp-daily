@@ -19,7 +19,7 @@ export default async function DatePage({ params }: { params: Promise<{ date: str
   }
 
   return (
-    <main className="px-6 py-10 max-w-xl mx-auto">
+    <main className="px-8 py-10 max-w-[720px] mx-auto">
       {/* 헤더 */}
       <header className="mb-10">
         <div className="flex items-center gap-2 mb-3">
