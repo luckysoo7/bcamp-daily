@@ -14,6 +14,8 @@ on:
 jobs:
   crawl-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: 레포 체크아웃
