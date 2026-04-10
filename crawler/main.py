@@ -152,13 +152,39 @@ def _save_json(
     return output_path
 
 
+def _resolve_date(date_arg: str | None) -> date:
+    """처리할 날짜 자동 결정.
+
+    --date 없으면:
+      1. 오늘 날짜 선곡표가 MBC에 있으면 → 오늘
+      2. 없으면 → 어제
+      3. 이미 data/ 에 해당 JSON 있으면 → 스킵 (sys.exit 0)
+    """
+    if date_arg:
+        return _parse_date(date_arg)
+
+    for candidate in [date.today(), date.today() - timedelta(days=1)]:
+        output_path = DATA_DIR / f"{candidate.isoformat()}.json"
+        if output_path.exists():
+            print(f"[스킵] {candidate.isoformat()} 선곡표 이미 존재: {output_path}")
+            sys.exit(0)
+
+        seq_id = find_seq_id(candidate)
+        if seq_id is not None:
+            print(f"[자동 감지] {candidate.isoformat()} 선곡표 발견 (seqID={seq_id})")
+            return candidate
+
+    print("[오류] 오늘/어제 선곡표를 MBC에서 찾을 수 없습니다.")
+    sys.exit(1)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="배철수의 음악캠프 선곡표 → YouTube 플레이리스트")
-    parser.add_argument("--date", help="처리할 날짜 (YYYY-MM-DD). 기본값: 어제")
+    parser.add_argument("--date", help="처리할 날짜 (YYYY-MM-DD). 기본값: 자동 감지")
     parser.add_argument("--dry-run", action="store_true", help="크롤링만, YouTube API 호출 없음")
     args = parser.parse_args()
 
-    target_date = _parse_date(args.date) if args.date else date.today() - timedelta(days=1)
+    target_date = _resolve_date(args.date)
     run(target_date, dry_run=args.dry_run)
 
 

@@ -2,8 +2,9 @@ name: 배캠 플레이리스트 자동 생성
 
 on:
   schedule:
-    # 매일 06:00 KST = 21:00 UTC (전날)
-    - cron: '0 21 * * *'
+    # 매일 22:00 KST = 13:00 UTC
+    # 크롤러가 오늘/어제 선곡표 자동 감지, 이미 있으면 스킵
+    - cron: '0 13 * * *'
   workflow_dispatch:
     inputs:
       date:
