@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.pickle
+
+# Secrets
+crawler/client_secret.json
+crawler/token.pickle
+
+# Node
+web/node_modules/
+web/.next/
+
+# Data (Git에 올릴 때는 포함할 것이므로 주석 처리)
+# data/

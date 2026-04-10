@@ -1,0 +1,50 @@
+name: 배캠 플레이리스트 자동 생성
+
+on:
+  schedule:
+    # 매일 06:00 KST = 21:00 UTC (전날)
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: '날짜 (YYYY-MM-DD). 비워두면 어제 날짜 자동 처리'
+        required: false
+        default: ''
+
+jobs:
+  crawl-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 레포 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Python 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: crawler/requirements.txt
+
+      - name: 의존성 설치
+        run: pip install -r crawler/requirements.txt
+
+      - name: 선곡표 크롤링 + 플레이리스트 생성
+        env:
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+        run: |
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            python -m crawler.main --date "${{ github.event.inputs.date }}"
+          else
+            python -m crawler.main
+          fi
+
+      - name: 결과 JSON 커밋 + 푸시
+        run: |
+          git config user.name "bcamp-daily[bot]"
+          git config user.email "bcamp-daily[bot]@users.noreply.github.com"
+          git add data/
+          # 변경 없으면 커밋 스킵 (이미 오늘 실행된 경우)
+          git diff --staged --quiet || git commit -m "chore: $(date +'%Y-%m-%d') 선곡표 자동 업데이트"
+          git push
