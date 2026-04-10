@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
+import MobileDrawer from "@/components/MobileDrawer";
 import { loadAllDates } from "@/lib/data";
 
 export const metadata: Metadata = {
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           {/* 메인 콘텐츠 */}
           <div className="flex-1 min-w-0 flex flex-col">
+            <MobileDrawer dates={dates} />
             <div className="flex-1">{children}</div>
 
             {/* 모바일 저작권 (사이드바 없을 때) */}

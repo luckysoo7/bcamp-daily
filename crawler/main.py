@@ -100,9 +100,8 @@ def run(target_date: date, dry_run: bool = False) -> Path:
                 song["matched"] = False
                 print(f"     ✗ {song['order']:2d}. {song['title']} — 검색 결과 없음")
 
-    except QuotaExceededError as e:
-        print(f"\n[오류] {e}")
-        sys.exit(1)
+    except QuotaExceededError:
+        raise  # _backfill / main 에서 처리
 
     print(f"\n4/4 JSON 저장...")
     output_path = _save_json(date_str, target_date, seq_id, songs, playlist_id)
@@ -177,16 +176,25 @@ def _resolve_date(date_arg: str | None) -> date:
     sys.exit(1)
 
 
-def _backfill(dry_run: bool, max_days: int = 2) -> None:
-    """최근 30일 중 빠진 날짜를 오래된 순으로 최대 max_days개 백필.
+def _needs_processing(json_path: Path) -> bool:
+    """JSON이 없거나, 있어도 youtube가 null이면 처리 대상."""
+    if not json_path.exists():
+        return True
+    with open(json_path, encoding="utf-8") as f:
+        data = json.load(f)
+    return data.get("youtube") is None
 
-    오늘 실행 후 쿼터 여유분으로 처리. 하루 최대 2개 → 약 2달이면 30일치 완성.
+
+def _backfill(dry_run: bool) -> None:
+    """최근 30일 중 미처리(JSON 없음 또는 youtube: null) 날짜를 최신순으로 처리.
+
+    쿼터가 닿을 때까지 계속. 쿼터 초과 시 즉시 중단.
     """
     filled = 0
     today = date.today()
-    for offset in range(30, 0, -1):  # 30일 전 → 어제 순서로 오래된 것부터
+    for offset in range(1, 31):  # 어제 → 30일 전 순서 (최신 우선)
         candidate = today - timedelta(days=offset)
-        if (DATA_DIR / f"{candidate.isoformat()}.json").exists():
+        if not _needs_processing(DATA_DIR / f"{candidate.isoformat()}.json"):
             continue
         seq_id = find_seq_id(candidate)
         if seq_id is None:
@@ -195,13 +203,14 @@ def _backfill(dry_run: bool, max_days: int = 2) -> None:
         try:
             run(candidate, dry_run=dry_run)
             filled += 1
-        except SystemExit:
-            pass  # QuotaExceeded 등 → 중단
-        if filled >= max_days:
+        except QuotaExceededError as e:
+            print(f"\n[백필] 쿼터 초과 — 중단. ({e})")
             break
+        except SystemExit:
+            continue  # seqID 없음 등 개별 오류 → 다음 날짜로
 
     if filled == 0:
-        print("\n[백필] 최근 30일 중 빠진 날짜 없음.")
+        print("\n[백필] 처리할 날짜 없음.")
     else:
         print(f"\n[백필] {filled}개 완료.")
 
@@ -214,7 +223,11 @@ def main() -> None:
     args = parser.parse_args()
 
     target_date = _resolve_date(args.date)
-    run(target_date, dry_run=args.dry_run)
+    try:
+        run(target_date, dry_run=args.dry_run)
+    except QuotaExceededError as e:
+        print(f"\n[오류] {e}")
+        sys.exit(1)
 
     if not args.no_backfill and not args.date:
         _backfill(dry_run=args.dry_run)
