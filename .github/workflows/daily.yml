@@ -52,4 +52,4 @@ jobs:
           git add data/
           # 변경 없으면 커밋 스킵 (이미 오늘 실행된 경우)
           git diff --staged --quiet || git commit -m "chore: $(date +'%Y-%m-%d') 선곡표 자동 업데이트"
-          git push
+          git push || (git pull --rebase && git push)

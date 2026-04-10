@@ -8,7 +8,6 @@ Usage:
 
 import argparse
 import json
-import os
 import sys
 from datetime import date, timedelta
 from pathlib import Path
@@ -60,8 +59,8 @@ def run(target_date: date, dry_run: bool = False) -> Path:
         return _save_json(date_str, target_date, seq_id, songs, playlist_id=None)
 
     # 3. YouTube API
-    print("\n3/4 YouTube 플레이리스트 생성...")
     import os
+    print("\n3/4 YouTube 플레이리스트 생성...")
     if os.environ.get("GOOGLE_REFRESH_TOKEN"):
         # CI 환경 (GitHub Actions)
         from crawler.auth_ci import get_youtube_client_ci
@@ -167,7 +166,7 @@ def _resolve_date(date_arg: str | None) -> date:
         output_path = DATA_DIR / f"{candidate.isoformat()}.json"
         if output_path.exists():
             print(f"[스킵] {candidate.isoformat()} 선곡표 이미 존재: {output_path}")
-            sys.exit(0)
+            continue
 
         seq_id = find_seq_id(candidate)
         if seq_id is not None:

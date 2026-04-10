@@ -12,7 +12,7 @@ from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build, Resource
 
-SCOPES = ["https://www.googleapis.com/auth/youtube"]
+from crawler.auth import SCOPES
 
 
 def get_youtube_client_ci() -> Resource:
