@@ -178,14 +178,47 @@ def _resolve_date(date_arg: str | None) -> date:
     sys.exit(1)
 
 
+def _backfill(dry_run: bool, max_days: int = 2) -> None:
+    """최근 30일 중 빠진 날짜를 오래된 순으로 최대 max_days개 백필.
+
+    오늘 실행 후 쿼터 여유분으로 처리. 하루 최대 2개 → 약 2달이면 30일치 완성.
+    """
+    filled = 0
+    today = date.today()
+    for offset in range(30, 0, -1):  # 30일 전 → 어제 순서로 오래된 것부터
+        candidate = today - timedelta(days=offset)
+        if (DATA_DIR / f"{candidate.isoformat()}.json").exists():
+            continue
+        seq_id = find_seq_id(candidate)
+        if seq_id is None:
+            continue
+        print(f"\n[백필] {candidate.isoformat()} 처리 중...")
+        try:
+            run(candidate, dry_run=dry_run)
+            filled += 1
+        except SystemExit:
+            pass  # QuotaExceeded 등 → 중단
+        if filled >= max_days:
+            break
+
+    if filled == 0:
+        print("\n[백필] 최근 30일 중 빠진 날짜 없음.")
+    else:
+        print(f"\n[백필] {filled}개 완료.")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="배철수의 음악캠프 선곡표 → YouTube 플레이리스트")
     parser.add_argument("--date", help="처리할 날짜 (YYYY-MM-DD). 기본값: 자동 감지")
     parser.add_argument("--dry-run", action="store_true", help="크롤링만, YouTube API 호출 없음")
+    parser.add_argument("--no-backfill", action="store_true", help="백필 스킵")
     args = parser.parse_args()
 
     target_date = _resolve_date(args.date)
     run(target_date, dry_run=args.dry_run)
+
+    if not args.no_backfill and not args.date:
+        _backfill(dry_run=args.dry_run)
 
 
 if __name__ == "__main__":

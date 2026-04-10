@@ -1,0 +1,71 @@
+{
+  "date": "2026-04-10",
+  "dayOfWeek": "금요일",
+  "seqID": 7304,
+  "source": "https://miniweb.imbc.com/Music/View?seqID=7304&progCode=RAMFM300",
+  "youtube": null,
+  "songs": [
+    {
+      "order": 1,
+      "title": "DON'T WANNA FIGHT",
+      "artist": "ALABAMA SHAKES"
+    },
+    {
+      "order": 2,
+      "title": "TWILIGHT",
+      "artist": "ELECTRIC LIGHT ORCHESTRA"
+    },
+    {
+      "order": 3,
+      "title": "YOU LEARN",
+      "artist": "ALANIS MORISSETTE"
+    },
+    {
+      "order": 4,
+      "title": "UMBRELLA",
+      "artist": "RIHANNA feat. JAY-Z"
+    },
+    {
+      "order": 5,
+      "title": "LEAVE BEFORE YOU LOVE ME",
+      "artist": "MARSHMELLO, JONAS BROTHERS"
+    },
+    {
+      "order": 6,
+      "title": "SO SICK",
+      "artist": "NE-YO"
+    },
+    {
+      "order": 7,
+      "title": "Concerto Grosso n.1 : 2° Tempo : Adagio (Shadows)",
+      "artist": "NEW TROLLS"
+    },
+    {
+      "order": 8,
+      "title": "ANOTHER DAY",
+      "artist": "DREAM THEATER"
+    },
+    {
+      "order": 9,
+      "title": "LOVE NEVER FELT SO GOOD",
+      "artist": "MICHAEL JACKSON"
+    },
+    {
+      "order": 10,
+      "title": "Popcorn",
+      "artist": "도경수 (D.O.) (디오)"
+    },
+    {
+      "order": 11,
+      "title": "뱅버스",
+      "artist": "250 (이오공)"
+    },
+    {
+      "order": 12,
+      "title": "바래",
+      "artist": "DAY 6 (데이식스)"
+    }
+  ],
+  "createdAt": "2026-04-10T16:48:40Z",
+  "matchRate": 0
+}

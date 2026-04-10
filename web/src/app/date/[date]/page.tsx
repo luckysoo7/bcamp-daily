@@ -1,41 +1,46 @@
 import Link from "next/link";
-import { loadLatest, loadAllDates } from "@/lib/data";
+import { notFound } from "next/navigation";
+import { loadPlaylist, getAllDateParams } from "@/lib/data";
 
-export default function Home() {
-  const latest = loadLatest();
-  const allDates = loadAllDates();
+export function generateStaticParams() {
+  return getAllDateParams();
+}
 
-  if (!latest) {
-    return (
-      <main className="min-h-screen flex items-center justify-center">
-        <div className="text-center" style={{ color: "var(--text-muted)" }}>
-          <p className="text-2xl mb-2">아직 선곡표가 없습니다</p>
-          <p className="text-sm">크롤러를 먼저 실행해주세요</p>
-        </div>
-      </main>
-    );
+export default async function DatePage({ params }: { params: Promise<{ date: string }> }) {
+  const { date } = await params;
+  const data = loadPlaylist(date);
+
+  if (!data) {
+    notFound();
   }
 
   return (
     <main className="min-h-screen px-4 py-12 max-w-2xl mx-auto">
+      {/* 뒤로가기 */}
+      <Link
+        href="/"
+        className="inline-flex items-center gap-1 text-sm mb-8 transition-opacity hover:opacity-70"
+        style={{ color: "var(--text-muted)" }}
+      >
+        ← 목록으로
+      </Link>
+
       {/* 헤더 */}
       <header className="mb-8">
         <p className="text-sm mb-1" style={{ color: "var(--text-muted)" }}>
           배철수의 음악캠프
         </p>
-        <h1 className="text-3xl font-bold tracking-tight" data-testid="date-heading">
-          {latest.date}
-        </h1>
+        <h1 className="text-3xl font-bold tracking-tight">{date}</h1>
         <p className="mt-1" style={{ color: "var(--sunset-gold)" }}>
-          {latest.dayOfWeek} · {latest.songs.length}곡
+          {data.dayOfWeek} · {data.songs.length}곡
         </p>
       </header>
 
       {/* CTA 버튼 */}
-      {latest.youtube && (
+      {data.youtube && (
         <div className="flex gap-3 mb-10">
           <a
-            href={latest.youtube.url}
+            href={data.youtube.url}
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 text-center py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-80"
@@ -47,7 +52,7 @@ export default function Home() {
             YouTube에서 듣기
           </a>
           <a
-            href={latest.youtube.musicUrl}
+            href={data.youtube.musicUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 text-center py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-80"
@@ -63,14 +68,17 @@ export default function Home() {
       )}
 
       {/* 선곡 목록 */}
-      <ol className="space-y-3 mb-14" data-testid="song-list">
-        {latest.songs.map((song) => (
+      <ol className="space-y-3 mb-14">
+        {data.songs.map((song) => (
           <li
             key={song.order}
             className="flex items-start gap-4 p-4 rounded-xl"
             style={{ background: "var(--card-bg)" }}
           >
-            <span className="text-xs font-mono w-5 shrink-0 mt-0.5" style={{ color: "var(--text-muted)" }}>
+            <span
+              className="text-xs font-mono w-5 shrink-0 mt-0.5"
+              style={{ color: "var(--text-muted)" }}
+            >
               {song.order}
             </span>
             <div className="flex-1 min-w-0">
@@ -93,42 +101,6 @@ export default function Home() {
           </li>
         ))}
       </ol>
-
-      {/* 지난 방송 */}
-      {allDates.length > 1 && (
-        <section>
-          <h2 className="text-sm font-semibold mb-4 tracking-wide uppercase" style={{ color: "var(--text-muted)" }}>
-            지난 방송
-          </h2>
-          <div className="space-y-2">
-            {allDates.slice(1).map((entry) => (
-              <Link
-                key={entry.date}
-                href={`/date/${entry.date}`}
-                className="flex items-center justify-between p-4 rounded-xl transition-opacity hover:opacity-70"
-                style={{ background: "var(--card-bg)" }}
-              >
-                <div>
-                  <span className="font-semibold text-sm">{entry.date}</span>
-                  <span className="text-xs ml-2" style={{ color: "var(--text-muted)" }}>
-                    {entry.dayOfWeek}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs" style={{ color: "var(--text-muted)" }}>
-                    {entry.songCount}곡
-                  </span>
-                  {entry.hasPlaylist && (
-                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(232,112,74,0.15)", color: "var(--sunset-orange)" }}>
-                      ▶
-                    </span>
-                  )}
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
 
       <footer className="mt-12 text-xs text-center" style={{ color: "var(--text-muted)" }}>
         <p>출처: MBC 배철수의 음악캠프</p>
