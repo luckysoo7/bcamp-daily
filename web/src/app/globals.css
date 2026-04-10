@@ -3,32 +3,47 @@
 :root {
   --sunset-orange: #e8704a;
   --sunset-gold: #f5a623;
-  --deep-navy: #0f1923;
+  --deep-navy: #0d1720;
   --card-bg: #1a2535;
   --text-primary: #f0ebe3;
   --text-muted: #8a9bb0;
-  --track-border: rgba(138, 155, 176, 0.1);
+  --track-border: rgba(138, 155, 176, 0.12);
 }
 
 body {
   background-color: var(--deep-navy);
-  /* Spotify/Apple Music 스타일 — 아트워크 색이 배경으로 번지는 ambient 효과 */
+  /* 4포인트 메시 그라디언트 — 살아있는 어둠 */
   background-image:
-    radial-gradient(ellipse 90% 55% at 8% 0%,  rgba(232, 112, 74, 0.14) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 45% at 92% 95%, rgba(245, 166, 35, 0.09) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 35% at 50% 50%, rgba(232, 112, 74, 0.03) 0%, transparent 70%);
+    radial-gradient(ellipse 80% 60% at 5% 0%,   rgba(232, 112, 74, 0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 95% 100%, rgba(245, 166, 35, 0.14) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 50% at 85% 10%,  rgba(180, 60,  20, 0.10) 0%, transparent 45%),
+    radial-gradient(ellipse 60% 35% at 30% 80%,  rgba(232, 112, 74, 0.07) 0%, transparent 50%);
   color: var(--text-primary);
   font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
-/* 아날로그 라디오 grain 텍스처 — 배경에 깊이 추가 */
+/* grain 텍스처 — mix-blend-mode overlay로 배경에 필름 질감 */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 9998;
-  opacity: 0.028;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 250px 250px;
+  opacity: 0.055;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* 트랙 row — neo-brutalism hover */
+.track-row {
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+  border-radius: 3px;
+  margin-inline: -8px;
+  padding-inline: 8px;
+}
+.track-row:hover {
+  transform: translateX(4px);
+  background: rgba(232, 112, 74, 0.04);
+  box-shadow: -3px 0 0 0 var(--sunset-orange);
 }

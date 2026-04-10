@@ -18,16 +18,21 @@ export default function Sidebar({ dates }: SidebarProps) {
 
   return (
     <nav className="flex flex-col h-full px-4 py-8">
-      {/* 브랜드 로고 */}
+      {/* 브랜드마크 */}
       <div className="mb-8 px-2">
-        <img
-          src="/logo.png"
-          alt="배철수의 음악캠프"
-          className="w-28 mb-1 opacity-90"
-          style={{ filter: "drop-shadow(0 1px 4px rgba(0,0,0,0.4))" }}
-        />
-        <p className="text-xs tracking-widest uppercase" style={{ color: "var(--text-muted)" }}>
-          playlist archive
+        <p
+          className="text-xs tracking-[0.2em] uppercase font-semibold mb-1"
+          style={{ color: "var(--sunset-orange)" }}
+        >
+          Radio Station
+        </p>
+        <p className="text-sm font-bold leading-snug" style={{ color: "var(--text-primary)" }}>
+          배철수의
+          <br />
+          음악캠프
+        </p>
+        <p className="text-xs mt-1 tracking-widest" style={{ color: "var(--text-muted)", opacity: 0.6 }}>
+          Playlist Archive
         </p>
       </div>
 

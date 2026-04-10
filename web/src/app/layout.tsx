@@ -21,69 +21,30 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <div className="flex min-h-screen">
-          {/* 좌측 사이드바 — 데스크톱 전용 */}
+          {/* 좌측 사이드바 — glassmorphism, 데스크톱 전용 */}
           <aside
             className="hidden md:flex flex-col w-60 shrink-0 sticky top-0 h-screen overflow-y-auto"
-            style={{ borderRight: "1px solid rgba(138, 155, 176, 0.12)" }}
+            style={{
+              background: "rgba(255, 255, 255, 0.025)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              borderRight: "1px solid rgba(255, 255, 255, 0.07)",
+            }}
           >
             <Sidebar dates={dates} />
           </aside>
 
           {/* 메인 콘텐츠 */}
           <div className="flex-1 min-w-0 flex flex-col">
-            {/* 프로그램 배너 — MBC 서버 직접 참조 (hotlink) */}
-            <div className="relative w-full overflow-hidden" style={{ height: "260px" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="//img.imbc.com/broad/radio/fm4u/musiccamp/v2/setting/homepage/__icsFiles/afieldfile/2020/06/18/b9_640_360_1.JPG"
-                alt="배철수의 음악캠프"
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{ filter: "brightness(0.38) saturate(1.2)" }}
-              />
-              {/* 좌측 ambient glow — 배너 색이 배경으로 번지는 효과 */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: "linear-gradient(to right, rgba(232,112,74,0.08) 0%, transparent 60%)",
-                }}
-              />
-              {/* 배너 위 로고 + 프로그램명 */}
-              <div className="relative z-10 flex items-end h-full px-8 pb-7">
-                <div>
-                  <p
-                    className="text-xs tracking-[0.2em] uppercase mb-2"
-                    style={{ color: "rgba(240,235,227,0.4)" }}
-                  >
-                    Radio Station
-                  </p>
-                  <img
-                    src="/logo.png"
-                    alt="배철수의 음악캠프 로고"
-                    className="h-11 mb-2 opacity-95"
-                    style={{ filter: "drop-shadow(0 2px 12px rgba(0,0,0,0.7))" }}
-                  />
-                  <p className="text-xs tracking-widest" style={{ color: "rgba(240,235,227,0.5)" }}>
-                    MBC FM4U 89.1 · 매일 저녁 6시
-                  </p>
-                </div>
-              </div>
-              {/* 하단 페이드 — 더 길게 */}
-              <div
-                className="absolute bottom-0 left-0 right-0 h-24"
-                style={{ background: "linear-gradient(to bottom, transparent, var(--deep-navy))" }}
-              />
-            </div>
-
-            {/* 페이지 본문 */}
             <div className="flex-1">{children}</div>
 
             {/* 모바일 저작권 (사이드바 없을 때) */}
             <footer
               className="md:hidden px-6 py-4 border-t text-xs leading-relaxed"
               style={{
-                borderColor: "rgba(138,155,176,0.12)",
+                borderColor: "rgba(138,155,176,0.08)",
                 color: "var(--text-muted)",
-                opacity: 0.5,
+                opacity: 0.45,
               }}
             >
               ⓒ MBC · 배철수의 음악캠프 — 방송 콘텐츠 저작권은 MBC에 있습니다
