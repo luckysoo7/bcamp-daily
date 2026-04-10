@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: 레포 체크아웃
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Python 설정
         uses: actions/setup-python@v5
