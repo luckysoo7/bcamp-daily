@@ -18,6 +18,24 @@ from crawler.youtube_client import search_videos, create_playlist, add_to_playli
 
 # 프로젝트 루트 기준 data/ 디렉토리
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+SONG_CACHE_PATH = DATA_DIR / "song_cache.json"
+
+
+def _cache_key(title: str, artist: str) -> str:
+    return f"{title.strip().upper()} — {artist.strip().upper()}"
+
+
+def _load_cache() -> dict[str, str]:
+    if SONG_CACHE_PATH.exists():
+        with open(SONG_CACHE_PATH, encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+
+def _save_cache(cache: dict[str, str]) -> None:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    with open(SONG_CACHE_PATH, "w", encoding="utf-8") as f:
+        json.dump(cache, f, ensure_ascii=False, indent=2, sort_keys=True)
 
 
 def _parse_date(date_str: str) -> date:
@@ -80,25 +98,46 @@ def run(target_date: date, dry_run: bool = False) -> Path:
         )
         print(f"     플레이리스트 생성: {playlist_id}")
 
+        cache = _load_cache()
         matched = 0
+        cache_hits = 0
         for song in songs:
-            query = f"{song['title']} {song['artist']}"
-            results = search_videos(youtube, query, max_results=1)
-            if results:
-                video = results[0]
-                song["videoId"] = video["video_id"]
-                song["videoTitle"] = video["title"]
-                song["channel"] = video["channel"]
-                song["matched"] = True
-                add_to_playlist(youtube, playlist_id, video["video_id"])
-                matched += 1
-                print(f"     ✓ {song['order']:2d}. {song['title']} → {video['title'][:50]}")
-            else:
-                song["videoId"] = None
+            key = _cache_key(song["title"], song["artist"])
+            cached_id = cache.get(key)
+
+            if cached_id:
+                video_id = cached_id
+                song["videoId"] = video_id
                 song["videoTitle"] = None
                 song["channel"] = None
-                song["matched"] = False
-                print(f"     ✗ {song['order']:2d}. {song['title']} — 검색 결과 없음")
+                song["matched"] = True
+                add_to_playlist(youtube, playlist_id, video_id)
+                matched += 1
+                cache_hits += 1
+                print(f"     ✓ {song['order']:2d}. {song['title']} → [캐시]")
+            else:
+                query = f"{song['title']} {song['artist']}"
+                results = search_videos(youtube, query, max_results=1)
+                if results:
+                    video = results[0]
+                    song["videoId"] = video["video_id"]
+                    song["videoTitle"] = video["title"]
+                    song["channel"] = video["channel"]
+                    song["matched"] = True
+                    cache[key] = video["video_id"]
+                    add_to_playlist(youtube, playlist_id, video["video_id"])
+                    matched += 1
+                    print(f"     ✓ {song['order']:2d}. {song['title']} → {video['title'][:50]}")
+                else:
+                    song["videoId"] = None
+                    song["videoTitle"] = None
+                    song["channel"] = None
+                    song["matched"] = False
+                    print(f"     ✗ {song['order']:2d}. {song['title']} — 검색 결과 없음")
+
+        _save_cache(cache)
+        if cache_hits:
+            print(f"     (캐시 적중 {cache_hits}곡 — search API 호출 절약)")
 
     except QuotaExceededError:
         raise  # _backfill / main 에서 처리
