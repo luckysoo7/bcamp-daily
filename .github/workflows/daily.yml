@@ -57,6 +57,12 @@ jobs:
           git diff --staged --quiet || git commit -m "chore: $(date +'%Y-%m-%d') 선곡표 자동 업데이트"
           git push || (git pull --rebase && git push)
 
+      - name: 플레이리스트 유효성 검증
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python -m crawler.validate
+
       - name: Discord 실패 알림
         if: failure()
         run: |
