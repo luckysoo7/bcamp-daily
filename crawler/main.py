@@ -90,6 +90,11 @@ def run(target_date: date, dry_run: bool = False) -> Path:
             token_path=str(Path(__file__).parent / "token.pickle"),
         )
 
+    playlist_id = None
+    cache = _load_cache()
+    matched = 0
+    cache_hits = 0
+
     try:
         playlist_id = create_playlist(
             youtube,
@@ -98,9 +103,6 @@ def run(target_date: date, dry_run: bool = False) -> Path:
         )
         print(f"     플레이리스트 생성: {playlist_id}")
 
-        cache = _load_cache()
-        matched = 0
-        cache_hits = 0
         for song in songs:
             key = _cache_key(song["title"], song["artist"])
             cached_id = cache.get(key)
@@ -140,7 +142,12 @@ def run(target_date: date, dry_run: bool = False) -> Path:
             print(f"     (캐시 적중 {cache_hits}곡 — search API 호출 절약)")
 
     except QuotaExceededError:
-        raise  # _backfill / main 에서 처리
+        # 쿼터 초과 시에도 진행된 만큼 저장 — 빈 플리 중복 생성 방지 + 캐시 보존
+        _save_cache(cache)
+        if playlist_id:
+            print(f"\n[쿼터 초과] 부분 저장 ({matched}/{len(songs)}곡)")
+            _save_json(date_str, target_date, seq_id, songs, playlist_id)
+        raise
 
     print(f"\n4/4 JSON 저장...")
     output_path = _save_json(date_str, target_date, seq_id, songs, playlist_id)
@@ -189,30 +196,6 @@ def _save_json(
     return output_path
 
 
-def _resolve_date(date_arg: str | None) -> date:
-    """처리할 날짜 자동 결정.
-
-    --date 없으면:
-      1. 오늘 날짜 선곡표가 MBC에 있으면 → 오늘
-      2. 없으면 → 어제
-      3. 이미 data/ 에 해당 JSON 있으면 → 스킵 (sys.exit 0)
-    """
-    if date_arg:
-        return _parse_date(date_arg)
-
-    for candidate in [date.today(), date.today() - timedelta(days=1)]:
-        output_path = DATA_DIR / f"{candidate.isoformat()}.json"
-        if output_path.exists():
-            print(f"[스킵] {candidate.isoformat()} 선곡표 이미 존재: {output_path}")
-            continue
-
-        seq_id = find_seq_id(candidate)
-        if seq_id is not None:
-            print(f"[자동 감지] {candidate.isoformat()} 선곡표 발견 (seqID={seq_id})")
-            return candidate
-
-    print("[오류] 오늘/어제 선곡표를 MBC에서 찾을 수 없습니다.")
-    sys.exit(1)
 
 
 def _needs_processing(json_path: Path) -> bool:
@@ -261,14 +244,31 @@ def main() -> None:
     parser.add_argument("--no-backfill", action="store_true", help="백필 스킵")
     args = parser.parse_args()
 
-    target_date = _resolve_date(args.date)
-    try:
-        run(target_date, dry_run=args.dry_run)
-    except QuotaExceededError as e:
-        print(f"\n[오류] {e}")
-        sys.exit(1)
+    if args.date:
+        # 날짜 직접 지정 시: 그냥 실행, 실패하면 exit(1)
+        try:
+            run(_parse_date(args.date), dry_run=args.dry_run)
+        except QuotaExceededError as e:
+            print(f"\n[오류] {e}")
+            sys.exit(1)
+        return
 
-    if not args.no_backfill and not args.date:
+    # --date 없이 실행 시 (Actions 정기 실행):
+    # 1. 오늘 것이 미완성이면 처리 시도
+    # 2. 항상 백필 실행 (쿼터 남은 만큼 과거 누락분 처리)
+    today = date.today()
+    if _needs_processing(DATA_DIR / f"{today.isoformat()}.json"):
+        seq_id = find_seq_id(today)
+        if seq_id is not None:
+            try:
+                run(today, dry_run=args.dry_run)
+            except QuotaExceededError as e:
+                print(f"\n[오류] {e}")
+                sys.exit(0)  # 쿼터 소진 → Actions 성공으로 기록, 백필 불필요
+            except SystemExit:
+                pass  # MBC 파싱 실패 등 → 백필로 이어서
+
+    if not args.no_backfill:
         _backfill(dry_run=args.dry_run)
 
 
