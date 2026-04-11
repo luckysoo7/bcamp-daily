@@ -57,6 +57,11 @@ export function loadLatest(): PlaylistData | null {
 }
 
 export function loadAllDates(): DateEntry[] {
+  const indexPath = path.join(DATA_DIR, "index.json");
+  if (fs.existsSync(indexPath)) {
+    return JSON.parse(fs.readFileSync(indexPath, "utf-8")) as DateEntry[];
+  }
+  // index.json 없으면 개별 파일 폴백 (초기 구동 시)
   return listJsonFiles().map((f) => {
     const data = JSON.parse(
       fs.readFileSync(path.join(DATA_DIR, f), "utf-8")

@@ -38,6 +38,26 @@ def _save_cache(cache: dict[str, str]) -> None:
         json.dump(cache, f, ensure_ascii=False, indent=2, sort_keys=True)
 
 
+def _rebuild_index() -> None:
+    """data/index.json 재생성 — 사이드바용 메타데이터만 담음."""
+    files = sorted(
+        [f for f in DATA_DIR.glob("????-??-??.json")],
+        reverse=True,
+    )
+    index = []
+    for f in files:
+        with open(f, encoding="utf-8") as fp:
+            d = json.load(fp)
+        index.append({
+            "date": d["date"],
+            "dayOfWeek": d["dayOfWeek"],
+            "songCount": len(d.get("songs", [])),
+            "hasPlaylist": d.get("youtube") is not None,
+        })
+    with open(DATA_DIR / "index.json", "w", encoding="utf-8") as f:
+        json.dump(index, f, ensure_ascii=False, indent=2)
+
+
 def _parse_date(date_str: str) -> date:
     try:
         return date.fromisoformat(date_str)
@@ -270,6 +290,8 @@ def main() -> None:
 
     if not args.no_backfill:
         _backfill(dry_run=args.dry_run)
+
+    _rebuild_index()
 
 
 if __name__ == "__main__":
