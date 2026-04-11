@@ -1,0 +1,91 @@
+{
+  "date": "2026-04-07",
+  "dayOfWeek": "화요일",
+  "seqID": 7301,
+  "source": "https://miniweb.imbc.com/Music/View?seqID=7301&progCode=RAMFM300",
+  "youtube": null,
+  "songs": [
+    {
+      "order": 1,
+      "title": "HOW DO YOU DO",
+      "artist": "MOUTH AND MACNEAL"
+    },
+    {
+      "order": 2,
+      "title": "IS THIS LOVE",
+      "artist": "WHITESNAKE"
+    },
+    {
+      "order": 3,
+      "title": "HEARTS",
+      "artist": "MARTY BALIN"
+    },
+    {
+      "order": 4,
+      "title": "LISTEN TO THE MUSIC",
+      "artist": "THE DOOBIE BROTHERS"
+    },
+    {
+      "order": 5,
+      "title": "EARTH SONG",
+      "artist": "MICHAEL JACKSON"
+    },
+    {
+      "order": 6,
+      "title": "DON'T CRY",
+      "artist": "GUNS N' ROSES"
+    },
+    {
+      "order": 7,
+      "title": "HEY EUGENE",
+      "artist": "PINK MARTINI"
+    },
+    {
+      "order": 8,
+      "title": "A THOUSAND MILES",
+      "artist": "VANESSA CARLTON"
+    },
+    {
+      "order": 9,
+      "title": "New Divide",
+      "artist": "LINKIN PARK"
+    },
+    {
+      "order": 10,
+      "title": "Monsters",
+      "artist": "Jordan Rakei, Nubya Garcia"
+    },
+    {
+      "order": 11,
+      "title": "Erik Satie - Gymnopedie No.1",
+      "artist": "Lang Lang"
+    },
+    {
+      "order": 12,
+      "title": "Happiness",
+      "artist": "The 1975"
+    },
+    {
+      "order": 13,
+      "title": "I Don't Think That I Like Her",
+      "artist": "Charlie Puth"
+    },
+    {
+      "order": 14,
+      "title": "BIRDS OF A FEATHER",
+      "artist": "Billie Eilish"
+    },
+    {
+      "order": 15,
+      "title": "Risk",
+      "artist": "Gracie Abrams"
+    },
+    {
+      "order": 16,
+      "title": "SMOOTH OPERATOR",
+      "artist": "SADE"
+    }
+  ],
+  "createdAt": "2026-04-11T02:06:17Z",
+  "matchRate": 0
+}

@@ -1,0 +1,86 @@
+{
+  "date": "2026-04-09",
+  "dayOfWeek": "목요일",
+  "seqID": 7303,
+  "source": "https://miniweb.imbc.com/Music/View?seqID=7303&progCode=RAMFM300",
+  "youtube": null,
+  "songs": [
+    {
+      "order": 1,
+      "title": "A SIMPLE MAN",
+      "artist": "LOBO"
+    },
+    {
+      "order": 2,
+      "title": "MOVING OUT (ANTHONY'S SONG)",
+      "artist": "BILLY JOEL"
+    },
+    {
+      "order": 3,
+      "title": "I WANT YOU",
+      "artist": "SAVAGE GARDEN"
+    },
+    {
+      "order": 4,
+      "title": "BYE BYE BYE",
+      "artist": "N SYNC"
+    },
+    {
+      "order": 5,
+      "title": "ALL FOR YOU",
+      "artist": "JANET JACKSON"
+    },
+    {
+      "order": 6,
+      "title": "I WANT YOU (SHE'S SO HEAVY)",
+      "artist": "THE BEATLES"
+    },
+    {
+      "order": 7,
+      "title": "BEAUTIFUL",
+      "artist": "CHRISTINA AGUILERA"
+    },
+    {
+      "order": 8,
+      "title": "WAITING FOR LOVE",
+      "artist": "AVICII"
+    },
+    {
+      "order": 9,
+      "title": "UNDER PRESSURE",
+      "artist": "QUEEN"
+    },
+    {
+      "order": 10,
+      "title": "Pink Pony Club",
+      "artist": "Chappell Roan"
+    },
+    {
+      "order": 11,
+      "title": "LEVITATING",
+      "artist": "DUA LIPA"
+    },
+    {
+      "order": 12,
+      "title": "LOVER, PLEASE STAY",
+      "artist": "NOTHING BUT THIEVES"
+    },
+    {
+      "order": 13,
+      "title": "GRAN TORINO",
+      "artist": "OST / JAMIE CULLUM"
+    },
+    {
+      "order": 14,
+      "title": "THE GREAT GIG IN THE SKY",
+      "artist": "PINK FLOYD"
+    },
+    {
+      "order": 15,
+      "title": "DAYS ARE NUMBERS(THE TRAVELLER)",
+      "artist": "THE ALAN PARSONS PROJECT"
+    }
+  ],
+  "createdAt": "2026-04-11T02:06:17Z",
+  "matchRate": 0
+}
