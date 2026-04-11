@@ -1,15 +1,21 @@
 [
   {
+    "date": "2026-04-11",
+    "dayOfWeek": "토요일",
+    "songCount": 25,
+    "hasPlaylist": true
+  },
+  {
     "date": "2026-04-10",
     "dayOfWeek": "금요일",
     "songCount": 12,
-    "hasPlaylist": false
+    "hasPlaylist": true
   },
   {
     "date": "2026-04-09",
     "dayOfWeek": "목요일",
     "songCount": 15,
-    "hasPlaylist": false
+    "hasPlaylist": true
   },
   {
     "date": "2026-04-08",
@@ -21,7 +27,7 @@
     "date": "2026-04-07",
     "dayOfWeek": "화요일",
     "songCount": 16,
-    "hasPlaylist": false
+    "hasPlaylist": true
   },
   {
     "date": "2026-04-06",
